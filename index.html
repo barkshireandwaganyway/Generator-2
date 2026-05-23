@@ -33,6 +33,7 @@
         <option value="weatherAdvisory">Weather Advisory</option>
         <option value="weatherWarning">Weather Warning</option>
         <option value="weatherWatch">Weather Watch</option>
+        <option value="currentConditions">Current Conditions RBRTW AREA</option>
         <option value="custom">Manual Custom</option>
       </select>
 
@@ -43,7 +44,7 @@
       <textarea id="headline" rows="2">STRONG STORMS POSSIBLE TONIGHT</textarea>
 
       <label>Brief Details</label>
-      <textarea id="details" rows="3">Large hail, damaging winds, and heavy rainfall may impact parts of the region.</textarea>
+      <textarea id="details" rows="3">Hail Possible, damaging winds, and heavy rainfall may impact parts of the region.</textarea>
 
       <label>Bottom Banner</label>
       <input id="bottomText" value="STAY WEATHER AWARE" />
@@ -61,6 +62,15 @@
       <label>Map / Radar Image</label>
       <input id="mapUpload" type="file" accept="image/*" />
       <input id="mapUrl" placeholder="or paste image URL here" />
+
+      <details class="toolbox" open>
+        <summary>Current Conditions Template</summary>
+        <div class="tool-row">
+          <button id="loadCurrentConditionsBtn" type="button">Load 78253 Conditions</button>
+          <button id="clearCurrentConditionsBtn" type="button">Remove Conditions Box</button>
+        </div>
+        <p class="small">This uses live Weather.gov data for ZIP 78253 and places it as a movable/editable text box inside the map frame.</p>
+      </details>
 
       <label>Map Auto-Scale</label>
       <select id="mapFit">
@@ -124,10 +134,7 @@
           <button id="clearTextBoxesBtn" type="button">Clear Text Boxes</button>
         </div>
         <label>Selected Text Box Text</label>
-        <textarea id="textBoxText" rows="4">NOAA HRRR V4
-PRECIPITATION AMOUNT IN INCHES
-BETWEEN NOW AND WEDNESDAY
-THIS IS 1 MODEL OF MANY.</textarea>
+        <textarea id="textBoxText" rows="4">ADD NOTE HERE</textarea>
         <div class="tool-row text-format-row">
           <button id="textAlignLeftBtn" type="button">Left</button>
           <button id="textAlignCenterBtn" type="button">Center</button>
@@ -225,7 +232,7 @@ THIS IS 1 MODEL OF MANY.</textarea>
           <div class="accent-strip"></div>
           <div class="info-copy">
             <h2 id="previewHeadline">STRONG STORMS POSSIBLE TONIGHT</h2>
-            <p id="previewDetails">Large hail, damaging winds, and heavy rainfall may impact parts of the region.</p>
+            <p id="previewDetails">Hail Possible, damaging winds, and heavy rainfall may impact parts of the region.</p>
           </div>
         </div>
 

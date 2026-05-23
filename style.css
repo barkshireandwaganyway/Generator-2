@@ -596,3 +596,43 @@ button:last-child {
   border-color: #ff0000;
   color: #ffffff;
 }
+
+
+/* =========================
+   CURRENT CONDITIONS TEMPLATE
+   ========================= */
+.graphic.currentConditions .top-banner {
+  background: linear-gradient(90deg, #062e66 0%, #0b4ea2 55%, #64d2ff 100%);
+  color: #ffffff;
+}
+
+.graphic.currentConditions .map-frame {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(100, 210, 255, .20), transparent 34%),
+    linear-gradient(135deg, #06162b 0%, #0b2c55 55%, #020814 100%);
+}
+
+.graphic.currentConditions .brand-badge,
+.graphic.currentConditions .map-placeholder {
+  display: none;
+}
+
+.current-conditions-box {
+  left: 70px;
+  top: 48px;
+  width: 900px;
+  height: 500px;
+  padding: 24px 30px;
+  background:
+    linear-gradient(135deg, rgba(5, 14, 31, .97), rgba(12, 45, 86, .94), rgba(2, 8, 20, .97)) !important;
+  border: 6px solid #64d2ff !important;
+  border-radius: 24px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.45), inset 0 0 0 2px rgba(255,255,255,.12);
+  color: #ffffff !important;
+  font-size: 27px !important;
+  line-height: 1.12;
+  font-weight: 900 !important;
+  text-align: left !important;
+  letter-spacing: .02em;
+  white-space: pre-wrap;
+}

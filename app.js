@@ -50,8 +50,219 @@ const defaults = {
   weatherAdvisory: { top: 'WEATHER ADVISORY', headline: 'WEATHER MAY IMPACT TRAVEL', details: 'Use caution and stay updated as conditions may change across the area.', bottom: 'CHECK CONDITIONS BEFORE TRAVEL', colors: ['#7a4b00', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#7a4b00'] },
   weatherWarning: { top: 'WEATHER WARNING', headline: 'HAZARDOUS WEATHER EXPECTED', details: 'Hazardous weather may impact the area. Take action if warnings are issued.', bottom: 'STAY ALERT AND TAKE ACTION', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#b30000'] },
   weatherWatch: { top: 'WEATHER WATCH', headline: 'WEATHER THREAT BEING MONITORED', details: 'Conditions may become hazardous. Monitor updates and be ready to act.', bottom: 'STAY WEATHER AWARE', colors: ['#d97706', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#d97706'] },
+  currentConditions: { top: 'CURRENT CONDITIONS', headline: '78253 LIVE WEATHER SNAPSHOT', details: 'Live NWS data for 78253 will be placed inside the map frame.', bottom: 'UPDATED FROM WEATHER.GOV', colors: ['#062e66', '#64d2ff', '#64d2ff', '#64d2ff', '#101820', '#050505', '#0b4ea2'] },
   custom: { top: 'WEATHER UPDATE', headline: 'CUSTOM WEATHER GRAPHIC', details: 'Enter your own text and choose a map or screenshot.', bottom: 'RBRTW WEATHER', colors: ['#1f2937', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#1f2937'] }
 };
+
+
+// -----------------------------
+// CURRENT CONDITIONS TEMPLATE - 78253
+// Pulls live NWS data and places it in the map frame as an editable/movable text panel.
+// -----------------------------
+const CURRENT_CONDITIONS_78253 = {
+  label: 'SAN ANTONIO / 78253',
+  lat: 29.46899,
+  lon: -98.78885
+};
+
+let currentConditionsBox = null;
+let lastCurrentConditionsText = '';
+let isLoadingCurrentConditions = false;
+
+function weatherApiHeaders() {
+  // Browser fetch cannot manually set User-Agent. Accept is enough for JSON-LD from api.weather.gov.
+  return { Accept: 'application/geo+json, application/json' };
+}
+
+async function fetchWeatherJson(url) {
+  const response = await fetch(url, { headers: weatherApiHeaders() });
+  if (!response.ok) throw new Error(`Weather.gov request failed: ${response.status}`);
+  return response.json();
+}
+
+function apiValue(item) {
+  if (!item || item.value === null || item.value === undefined || Number.isNaN(item.value)) return null;
+  return item.value;
+}
+
+function cToF(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return null;
+  return Math.round((Number(value) * 9) / 5 + 32);
+}
+
+function msToMph(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return null;
+  return Math.round(Number(value) * 2.23694);
+}
+
+function metersToMiles(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return null;
+  return Math.round(Number(value) * 0.000621371);
+}
+
+function firstGridValue(series) {
+  if (!series || !Array.isArray(series.values) || !series.values.length) return null;
+  return series.values[0].value ?? null;
+}
+
+function degreesToCompass(degrees) {
+  if (degrees === null || degrees === undefined || Number.isNaN(Number(degrees))) return null;
+  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  return directions[Math.round(Number(degrees) / 22.5) % 16];
+}
+
+function firstNumberFromText(value) {
+  const match = String(value || '').match(/\d+/);
+  return match ? Number(match[0]) : null;
+}
+
+function displayValue(value, suffix = '', fallback = 'N/A') {
+  if (value === null || value === undefined || value === '' || Number.isNaN(value)) return fallback;
+  return `${value}${suffix}`;
+}
+
+function formatWeatherTime(value) {
+  if (!value) return new Date().toLocaleString();
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return new Date().toLocaleString();
+  return date.toLocaleString();
+}
+
+function buildCurrentConditionsText(data) {
+  const alerts = data.alerts.length ? data.alerts.join(' / ') : 'No active NWS alerts';
+  return [
+    'RBRTW CURRENT CONDITIONS',
+    data.location,
+    data.condition,
+    '',
+    `TEMP: ${displayValue(data.temperature, '°F')}`,
+    `HEAT INDEX: ${displayValue(data.heatIndex, '°F')}`,
+    `DEW POINT: ${displayValue(data.dewPoint, '°F')}`,
+    `HUMIDITY: ${displayValue(data.humidity, '%')}`,
+    '',
+    `WIND: ${displayValue(data.windDirection, '')} ${displayValue(data.windSpeed, ' MPH')}`,
+    `GUSTS: ${displayValue(data.windGust, ' MPH')}`,
+    `RAIN CHANCE: ${displayValue(data.rainChance, '%')}`,
+    `SKY COVER: ${displayValue(data.skyCover, '%')}`,
+    `VISIBILITY: ${displayValue(data.visibility, ' MI')}`,
+    '',
+    `ALERTS: ${alerts}`,
+    '',
+    `UPDATED: ${data.updated}`
+  ].join('\n');
+}
+
+function setCurrentConditionsLoadingBox(message = 'Loading live NWS data for 78253...') {
+  lastCurrentConditionsText = `RBRTW CURRENT CONDITIONS\nSAN ANTONIO / 78253\n\n${message}`;
+  placeCurrentConditionsBox(lastCurrentConditionsText);
+}
+
+function placeCurrentConditionsBox(text) {
+  if (!objectLayer) return;
+
+  mapImage.removeAttribute('src');
+  mapImage.style.display = 'none';
+  mapPlaceholder.style.display = 'none';
+  currentMapDataUrl = '';
+  currentMapUrl = '';
+  if (mapUrl) mapUrl.value = '';
+
+  if (!currentConditionsBox || !objectLayer.contains(currentConditionsBox)) {
+    currentConditionsBox = document.createElement('div');
+    currentConditionsBox.className = 'text-box-object current-conditions-box';
+    currentConditionsBox.contentEditable = 'true';
+    currentConditionsBox.spellcheck = false;
+    currentConditionsBox.style.left = '70px';
+    currentConditionsBox.style.top = '48px';
+    currentConditionsBox.style.width = '900px';
+    currentConditionsBox.style.height = '500px';
+    currentConditionsBox.style.color = '#ffffff';
+    currentConditionsBox.style.backgroundColor = '#07182f';
+    currentConditionsBox.style.borderColor = '#64d2ff';
+    currentConditionsBox.style.borderWidth = '6px';
+    currentConditionsBox.style.fontSize = '27px';
+    currentConditionsBox.style.textAlign = 'left';
+    currentConditionsBox.style.fontWeight = '900';
+    currentConditionsBox.style.fontStyle = 'normal';
+    currentConditionsBox.style.textDecoration = 'none';
+    objectLayer.appendChild(currentConditionsBox);
+    makeDraggableResizable(currentConditionsBox);
+    currentConditionsBox.addEventListener('focus', () => selectTextBox(currentConditionsBox));
+    currentConditionsBox.addEventListener('click', () => selectTextBox(currentConditionsBox));
+    currentConditionsBox.addEventListener('input', () => {
+      lastCurrentConditionsText = currentConditionsBox.innerText;
+      if (selectedTextBox === currentConditionsBox && textBoxText) textBoxText.value = currentConditionsBox.innerText;
+    });
+  }
+
+  currentConditionsBox.innerText = text;
+  selectTextBox(currentConditionsBox);
+}
+
+async function loadCurrentConditions78253() {
+  if (isLoadingCurrentConditions) return;
+  isLoadingCurrentConditions = true;
+  setCurrentConditionsLoadingBox();
+
+  try {
+    const { lat, lon, label } = CURRENT_CONDITIONS_78253;
+    const point = await fetchWeatherJson(`https://api.weather.gov/points/${lat},${lon}`);
+    const props = point.properties || {};
+    const hourlyUrl = props.forecastHourly;
+    const gridUrl = props.forecastGridData;
+    const stationsUrl = props.observationStations;
+    const alertsUrl = `https://api.weather.gov/alerts/active?point=${lat},${lon}`;
+
+    const [hourly, grid, stations, alerts] = await Promise.all([
+      hourlyUrl ? fetchWeatherJson(hourlyUrl) : Promise.resolve(null),
+      gridUrl ? fetchWeatherJson(gridUrl) : Promise.resolve(null),
+      stationsUrl ? fetchWeatherJson(stationsUrl) : Promise.resolve(null),
+      fetchWeatherJson(alertsUrl)
+    ]);
+
+    const firstStationUrl = stations?.features?.[0]?.id;
+    let observation = null;
+    if (firstStationUrl) {
+      try { observation = await fetchWeatherJson(`${firstStationUrl}/observations/latest`); }
+      catch (error) { console.warn('Latest observation unavailable:', error); }
+    }
+
+    const obs = observation?.properties || {};
+    const period = hourly?.properties?.periods?.[0] || {};
+    const gridProps = grid?.properties || {};
+    const alertNames = (alerts?.features || []).map(feature => feature?.properties?.event).filter(Boolean);
+
+    const data = {
+      location: label,
+      condition: obs.textDescription || period.shortForecast || 'Current conditions unavailable',
+      temperature: cToF(apiValue(obs.temperature)) ?? period.temperature ?? cToF(firstGridValue(gridProps.temperature)),
+      heatIndex: cToF(apiValue(obs.heatIndex)) ?? cToF(firstGridValue(gridProps.apparentTemperature)),
+      dewPoint: cToF(apiValue(obs.dewpoint)) ?? cToF(firstGridValue(gridProps.dewpoint)),
+      humidity: Math.round(apiValue(obs.relativeHumidity) ?? firstGridValue(gridProps.relativeHumidity) ?? NaN),
+      windDirection: degreesToCompass(apiValue(obs.windDirection)) || period.windDirection || 'N/A',
+      windSpeed: msToMph(apiValue(obs.windSpeed)) ?? firstNumberFromText(period.windSpeed),
+      windGust: msToMph(apiValue(obs.windGust)) ?? firstNumberFromText(period.windGust),
+      rainChance: period.probabilityOfPrecipitation?.value ?? firstGridValue(gridProps.probabilityOfPrecipitation),
+      skyCover: Math.round(firstGridValue(gridProps.skyCover) ?? NaN),
+      visibility: metersToMiles(apiValue(obs.visibility)),
+      alerts: alertNames,
+      updated: formatWeatherTime(obs.timestamp || period.startTime || new Date().toISOString())
+    };
+
+    lastCurrentConditionsText = buildCurrentConditionsText(data);
+    placeCurrentConditionsBox(lastCurrentConditionsText);
+  } catch (error) {
+    console.error(error);
+    placeCurrentConditionsBox(`RBRTW CURRENT CONDITIONS\nSAN ANTONIO / 78253\n\nCould not load live Weather.gov data.\n${error.message || error}`);
+  } finally {
+    isLoadingCurrentConditions = false;
+  }
+}
+
+function clearCurrentConditionsBox() {
+  if (currentConditionsBox && objectLayer?.contains(currentConditionsBox)) currentConditionsBox.remove();
+  currentConditionsBox = null;
+}
 
 function setColors(colors) {
   [topColor.value, accentColor.value, bottomColor.value, highlightColor.value, infoColor.value, frameColor.value] = colors;
@@ -76,6 +287,15 @@ function applyPreset(type) {
   bottomText.value = item.bottom;
   setColors(item.colors);
   applyPreview();
+
+  if (type === 'currentConditions') {
+    loadCurrentConditions78253();
+  } else {
+    clearCurrentConditionsBox();
+    if (!currentMapDataUrl && !currentMapUrl && !mapImage.getAttribute('src')) {
+      mapPlaceholder.style.display = 'flex';
+    }
+  }
 }
 
 function updatePreviewScale() {
@@ -168,6 +388,11 @@ function applyPreview() {
   applyColors();
   applyMapFit();
   applyMapTransform();
+
+  if (type === 'currentConditions') {
+    if (lastCurrentConditionsText) placeCurrentConditionsBox(lastCurrentConditionsText);
+    return;
+  }
 
   const pastedUrl = mapUrl.value.trim();
   if (pastedUrl && pastedUrl !== currentMapUrl) {
@@ -357,6 +582,7 @@ function getTopBannerGradient(ctx, type) {
     hailWarning: ['#7a0000', '#b30000', '#ff6f14'],
 
     flood: ['#062e66', '#0b4ea2', '#64d2ff'],
+    currentConditions: ['#062e66', '#0b4ea2', '#64d2ff'],
     heat: ['#8f2600', '#c74600', '#ffe066'],
     radar: ['#220047', '#3c096c', '#f72585'],
 
@@ -426,17 +652,26 @@ async function exportGraphicWithCanvas() {
   ctx.fillRect(mapX, mapY, mapW, mapH);
 
   const src = currentMapDataUrl || currentMapUrl || mapImage.getAttribute('src') || '';
-  try {
-    const img = await loadImageForCanvas(src);
-    drawContainedImage(ctx, img, mapX, mapY, mapW, mapH, mapFit.value || 'contain', Number(mapZoom?.value || 100) / 100, Number(mapPanX?.value || 0), Number(mapPanY?.value || 0));
-  } catch (e) {
-    // Keep the frame visible if a pasted URL blocks canvas export.
-    ctx.fillStyle = '#111722';
+  if (templateType.value === 'currentConditions') {
+    const bg = ctx.createLinearGradient(mapX, mapY, mapX + mapW, mapY + mapH);
+    bg.addColorStop(0, '#06162b');
+    bg.addColorStop(0.55, '#0b2c55');
+    bg.addColorStop(1, '#020814');
+    ctx.fillStyle = bg;
     ctx.fillRect(mapX, mapY, mapW, mapH);
-    ctx.fillStyle = '#8992a3';
-    ctx.font = '900 34px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('MAP COULD NOT BE EXPORTED', 540, mapY + mapH / 2);
+  } else {
+    try {
+      const img = await loadImageForCanvas(src);
+      drawContainedImage(ctx, img, mapX, mapY, mapW, mapH, mapFit.value || 'contain', Number(mapZoom?.value || 100) / 100, Number(mapPanX?.value || 0), Number(mapPanY?.value || 0));
+    } catch (e) {
+      // Keep the frame visible if a pasted URL blocks canvas export.
+      ctx.fillStyle = '#111722';
+      ctx.fillRect(mapX, mapY, mapW, mapH);
+      ctx.fillStyle = '#8992a3';
+      ctx.font = '900 34px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('MAP COULD NOT BE EXPORTED', 540, mapY + mapH / 2);
+    }
   }
 
   // Draggable SVG line.
@@ -504,16 +739,18 @@ async function exportGraphicWithCanvas() {
   }
 
   // Brand badge.
-  ctx.fillStyle = 'rgba(0,0,0,.82)';
-  ctx.fillRect(885, 162, 158, 64);
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(885, 162, 158, 64);
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '1000 34px Arial';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('RBRTW', 964, 194);
+  if (templateType.value !== 'currentConditions') {
+    ctx.fillStyle = 'rgba(0,0,0,.82)';
+    ctx.fillRect(885, 162, 158, 64);
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(885, 162, 158, 64);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '1000 34px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('RBRTW', 964, 194);
+  }
 
   // Info panel.
   ctx.fillStyle = info;
@@ -1150,6 +1387,22 @@ colorKeyPlacement?.addEventListener('change', () => {
   }
 });
 colorKeyType?.addEventListener('change', addOrUpdateColorKey);
+
+const loadCurrentConditionsBtn = document.getElementById('loadCurrentConditionsBtn');
+const clearCurrentConditionsBtn = document.getElementById('clearCurrentConditionsBtn');
+
+loadCurrentConditionsBtn?.addEventListener('click', () => {
+  templateType.value = 'currentConditions';
+  applyPreset('currentConditions');
+});
+
+clearCurrentConditionsBtn?.addEventListener('click', () => {
+  clearCurrentConditionsBox();
+  lastCurrentConditionsText = '';
+  if (templateType.value === 'currentConditions') {
+    mapPlaceholder.style.display = 'flex';
+  }
+});
 
 function drawCanvasTextBox(ctx, el, x, y, w, h) {
   const styles = getComputedStyle(el);
