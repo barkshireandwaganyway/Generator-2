@@ -34,23 +34,23 @@ const mapImage = document.getElementById('mapImage');
 const mapPlaceholder = document.getElementById('mapPlaceholder');
 
 const defaults = {
-  severe: { top: 'SEVERE WEATHER ALERT', headline: 'STRONG STORMS POSSIBLE TONIGHT', details: 'Large hail, damaging winds, and heavy rainfall may impact parts of the region.', bottom: 'STAY WEATHER AWARE', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505'] },
-  flood: { top: 'FLOODING RISK', headline: 'HEAVY RAINFALL POSSIBLE', details: 'Repeated rounds of rain may cause street flooding and poor drainage issues.', bottom: 'TURN AROUND, DON’T DROWN', colors: ['#0b4ea2', '#64d2ff', '#64d2ff', '#64d2ff', '#101820', '#050505'] },
-  heat: { top: 'HEAT ALERT', headline: 'DANGEROUS HEAT EXPECTED', details: 'Limit outdoor activity, hydrate often, and check on pets and elderly neighbors.', bottom: 'HEAT SAFETY MATTERS', colors: ['#c74600', '#ffe066', '#ffe066', '#ffe066', '#17110a', '#050505'] },
-  radar: { top: 'RADAR UPDATE', headline: 'STORMS MOVING THROUGH THE AREA', details: 'Heavy rain and gusty winds are possible as this activity moves across the region.', bottom: 'CHECK RADAR BEFORE TRAVEL', colors: ['#3c096c', '#f72585', '#f72585', '#f72585', '#100818', '#050505'] },
-  windAdvisory: { top: 'STRONG WIND ADVISORY', headline: 'STRONG WINDS POSSIBLE', details: 'Secure loose outdoor items and use caution while driving high-profile vehicles.', bottom: 'USE CAUTION OUTDOORS', colors: ['#7a4b00', '#ffcc33', '#ffcc33', '#ffcc33', '#111111', '#050505'] },
-  windWarning: { top: 'STRONG WIND WARNING', headline: 'DAMAGING WINDS POSSIBLE', details: 'Strong winds may cause tree damage, power outages, and dangerous travel conditions.', bottom: 'TAKE WIND WARNINGS SERIOUSLY', colors: ['#b30000', '#ffcc33', '#ffcc33', '#ffcc33', '#111111', '#050505'] },
-  windWatch: { top: 'STRONG WIND WATCH', headline: 'WIND THREAT BEING MONITORED', details: 'Conditions may become favorable for strong winds. Stay updated for later alerts.', bottom: 'STAY WEATHER AWARE', colors: ['#8a2be2', '#ffcc33', '#ffcc33', '#ffcc33', '#111111', '#050505'] },
-  thunderstormAdvisory: { top: 'THUNDERSTORM ADVISORY', headline: 'THUNDERSTORMS POSSIBLE', details: 'Lightning, brief heavy rain, and gusty winds may affect parts of the area.', bottom: 'WHEN THUNDER ROARS, GO INDOORS', colors: ['#7a4b00', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505'] },
-  thunderstormWarning: { top: 'THUNDERSTORM WARNING', headline: 'SEVERE STORMS POSSIBLE', details: 'Damaging winds, large hail, frequent lightning, and heavy rain may occur.', bottom: 'SEEK SHELTER IF WARNED', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505'] },
-  thunderstormWatch: { top: 'THUNDERSTORM WATCH', headline: 'STORMS BEING MONITORED', details: 'The atmosphere may support strong to severe storms. Stay alert for warnings.', bottom: 'STAY WEATHER AWARE', colors: ['#d97706', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505'] },
-  hailAdvisory: { top: 'HAIL ADVISORY', headline: 'HAIL POSSIBLE', details: 'Small hail may occur with stronger storms. Protect vehicles and outdoor items.', bottom: 'WATCH FOR RAPID CHANGES', colors: ['#334155', '#a7f3d0', '#a7f3d0', '#a7f3d0', '#111111', '#050505'] },
-  hailWarning: { top: 'HAIL WARNING', headline: 'LARGE HAIL POSSIBLE', details: 'Large hail may damage vehicles, roofs, windows, and outdoor property.', bottom: 'MOVE VEHICLES UNDER COVER', colors: ['#b30000', '#a7f3d0', '#a7f3d0', '#a7f3d0', '#111111', '#050505'] },
-  hailWatch: { top: 'HAIL WATCH', headline: 'HAIL THREAT BEING MONITORED', details: 'Conditions may support hail-producing storms. Check back for updates.', bottom: 'STAY WEATHER AWARE', colors: ['#5b21b6', '#a7f3d0', '#a7f3d0', '#a7f3d0', '#111111', '#050505'] },
-  weatherAdvisory: { top: 'WEATHER ADVISORY', headline: 'WEATHER MAY IMPACT TRAVEL', details: 'Use caution and stay updated as conditions may change across the area.', bottom: 'CHECK CONDITIONS BEFORE TRAVEL', colors: ['#7a4b00', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505'] },
-  weatherWarning: { top: 'WEATHER WARNING', headline: 'HAZARDOUS WEATHER EXPECTED', details: 'Hazardous weather may impact the area. Take action if warnings are issued.', bottom: 'STAY ALERT AND TAKE ACTION', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505'] },
-  weatherWatch: { top: 'WEATHER WATCH', headline: 'WEATHER THREAT BEING MONITORED', details: 'Conditions may become hazardous. Monitor updates and be ready to act.', bottom: 'STAY WEATHER AWARE', colors: ['#d97706', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505'] },
-  custom: { top: 'WEATHER UPDATE', headline: 'CUSTOM WEATHER GRAPHIC', details: 'Enter your own text and choose a map or screenshot.', bottom: 'RBRTW WEATHER', colors: ['#1f2937', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505'] }
+  severe: { top: 'SEVERE WEATHER ALERT', headline: 'STRONG STORMS POSSIBLE TONIGHT', details: 'Large hail, damaging winds, and heavy rainfall may impact parts of the region.', bottom: 'STAY WEATHER AWARE', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#b30000'] },
+  flood: { top: 'FLOODING RISK', headline: 'HEAVY RAINFALL POSSIBLE', details: 'Repeated rounds of rain may cause street flooding and poor drainage issues.', bottom: 'TURN AROUND, DON’T DROWN', colors: ['#0b4ea2', '#64d2ff', '#64d2ff', '#64d2ff', '#101820', '#050505', '#0b4ea2'] },
+  heat: { top: 'HEAT ALERT', headline: 'DANGEROUS HEAT EXPECTED', details: 'Limit outdoor activity, hydrate often, and check on pets and elderly neighbors.', bottom: 'HEAT SAFETY MATTERS', colors: ['#c74600', '#ffe066', '#ffe066', '#ffe066', '#17110a', '#050505', '#c74600'] },
+  radar: { top: 'RADAR UPDATE', headline: 'STORMS MOVING THROUGH THE AREA', details: 'Heavy rain and gusty winds are possible as this activity moves across the region.', bottom: 'CHECK RADAR BEFORE TRAVEL', colors: ['#3c096c', '#f72585', '#f72585', '#f72585', '#100818', '#050505', '#3c096c'] },
+  windAdvisory: { top: 'STRONG WIND ADVISORY', headline: 'STRONG WINDS POSSIBLE', details: 'Secure loose outdoor items and use caution while driving high-profile vehicles.', bottom: 'USE CAUTION OUTDOORS', colors: ['#7a4b00', '#ffcc33', '#ffcc33', '#ffcc33', '#111111', '#050505', '#7a4b00'] },
+  windWarning: { top: 'STRONG WIND WARNING', headline: 'DAMAGING WINDS POSSIBLE', details: 'Strong winds may cause tree damage, power outages, and dangerous travel conditions.', bottom: 'TAKE WIND WARNINGS SERIOUSLY', colors: ['#b30000', '#ffcc33', '#ffcc33', '#ffcc33', '#111111', '#050505', '#b30000'] },
+  windWatch: { top: 'STRONG WIND WATCH', headline: 'WIND THREAT BEING MONITORED', details: 'Conditions may become favorable for strong winds. Stay updated for later alerts.', bottom: 'STAY WEATHER AWARE', colors: ['#8a2be2', '#ffcc33', '#ffcc33', '#ffcc33', '#111111', '#050505', '#8a2be2'] },
+  thunderstormAdvisory: { top: 'THUNDERSTORM ADVISORY', headline: 'THUNDERSTORMS POSSIBLE', details: 'Lightning, brief heavy rain, and gusty winds may affect parts of the area.', bottom: 'WHEN THUNDER ROARS, GO INDOORS', colors: ['#7a4b00', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#7a4b00'] },
+  thunderstormWarning: { top: 'THUNDERSTORM WARNING', headline: 'SEVERE STORMS POSSIBLE', details: 'Damaging winds, large hail, frequent lightning, and heavy rain may occur.', bottom: 'SEEK SHELTER IF WARNED', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#b30000'] },
+  thunderstormWatch: { top: 'THUNDERSTORM WATCH', headline: 'STORMS BEING MONITORED', details: 'The atmosphere may support strong to severe storms. Stay alert for warnings.', bottom: 'STAY WEATHER AWARE', colors: ['#d97706', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#d97706'] },
+  hailAdvisory: { top: 'HAIL ADVISORY', headline: 'HAIL POSSIBLE', details: 'Small hail may occur with stronger storms. Protect vehicles and outdoor items.', bottom: 'WATCH FOR RAPID CHANGES', colors: ['#334155', '#a7f3d0', '#a7f3d0', '#a7f3d0', '#111111', '#050505', '#334155'] },
+  hailWarning: { top: 'HAIL WARNING', headline: 'LARGE HAIL POSSIBLE', details: 'Large hail may damage vehicles, roofs, windows, and outdoor property.', bottom: 'MOVE VEHICLES UNDER COVER', colors: ['#b30000', '#a7f3d0', '#a7f3d0', '#a7f3d0', '#111111', '#050505', '#b30000'] },
+  hailWatch: { top: 'HAIL WATCH', headline: 'HAIL THREAT BEING MONITORED', details: 'Conditions may support hail-producing storms. Check back for updates.', bottom: 'STAY WEATHER AWARE', colors: ['#5b21b6', '#a7f3d0', '#a7f3d0', '#a7f3d0', '#111111', '#050505', '#5b21b6'] },
+  weatherAdvisory: { top: 'WEATHER ADVISORY', headline: 'WEATHER MAY IMPACT TRAVEL', details: 'Use caution and stay updated as conditions may change across the area.', bottom: 'CHECK CONDITIONS BEFORE TRAVEL', colors: ['#7a4b00', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#7a4b00'] },
+  weatherWarning: { top: 'WEATHER WARNING', headline: 'HAZARDOUS WEATHER EXPECTED', details: 'Hazardous weather may impact the area. Take action if warnings are issued.', bottom: 'STAY ALERT AND TAKE ACTION', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#b30000'] },
+  weatherWatch: { top: 'WEATHER WATCH', headline: 'WEATHER THREAT BEING MONITORED', details: 'Conditions may become hazardous. Monitor updates and be ready to act.', bottom: 'STAY WEATHER AWARE', colors: ['#d97706', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#d97706'] },
+  custom: { top: 'WEATHER UPDATE', headline: 'CUSTOM WEATHER GRAPHIC', details: 'Enter your own text and choose a map or screenshot.', bottom: 'RBRTW WEATHER', colors: ['#1f2937', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#1f2937'] }
 };
 
 function setColors(colors) {
@@ -346,6 +346,40 @@ function drawCanvasArrow(ctx, x1, y1, x2, y2, color, thickness, type, atStart) {
   ctx.restore();
 }
 
+
+function getTopBannerGradient(ctx, type) {
+  const gradient = ctx.createLinearGradient(16, 16, 1064, 16);
+  const palettes = {
+    severe: ['#7a0000', '#b30000', '#ff6f14'],
+    thunderstormWarning: ['#7a0000', '#b30000', '#ff6f14'],
+    weatherWarning: ['#7a0000', '#b30000', '#ff6f14'],
+    windWarning: ['#7a0000', '#b30000', '#ff6f14'],
+    hailWarning: ['#7a0000', '#b30000', '#ff6f14'],
+
+    flood: ['#062e66', '#0b4ea2', '#64d2ff'],
+    heat: ['#8f2600', '#c74600', '#ffe066'],
+    radar: ['#220047', '#3c096c', '#f72585'],
+
+    windAdvisory: ['#4f2f00', '#7a4b00', '#ffcc33'],
+    thunderstormAdvisory: ['#4f2f00', '#7a4b00', '#ffcc33'],
+    weatherAdvisory: ['#4f2f00', '#7a4b00', '#ffcc33'],
+
+    windWatch: ['#351062', '#5b21b6', '#a78bfa'],
+    hailWatch: ['#351062', '#5b21b6', '#a78bfa'],
+
+    thunderstormWatch: ['#7c3c00', '#d97706', '#ffd43b'],
+    weatherWatch: ['#7c3c00', '#d97706', '#ffd43b'],
+
+    hailAdvisory: ['#172033', '#334155', '#a7f3d0'],
+    custom: ['#111827', '#1f2937', '#ffd43b']
+  };
+  const colors = palettes[type] || [topColor.value, topColor.value, accentColor.value];
+  gradient.addColorStop(0, colors[0]);
+  gradient.addColorStop(0.55, colors[1]);
+  gradient.addColorStop(1, colors[2]);
+  return gradient;
+}
+
 async function exportGraphicWithCanvas() {
   applyPreview();
   await waitForGraphicImages();
@@ -368,7 +402,7 @@ async function exportGraphicWithCanvas() {
   ctx.fillRect(0, 0, 1080, 1080);
 
   // Top banner.
-  ctx.fillStyle = top;
+  ctx.fillStyle = getTopBannerGradient(ctx, templateType.value);
   ctx.fillRect(16, 16, 1048, 128);
   ctx.fillStyle = accent;
   ctx.fillRect(16, 136, 1048, 8);

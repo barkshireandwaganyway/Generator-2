@@ -428,10 +428,9 @@ button:last-child { background: #e53935; color: #fff; }
   outline: none;
 }
 
-
-
 /* =========================
-   AUTO FORECAST THEME PATCH
+   TEMPLATE-SPECIFIC GRADIENT COLORS
+   Fixes missing/default post colors while keeping gradients.
    ========================= */
 
 body {
@@ -498,38 +497,86 @@ button:last-child {
   color: #ffffff;
 }
 
-.top-banner {
-  background: linear-gradient(90deg, #7a0000 0%, #b30000 45%, #d97706 100%);
-  border-bottom: 8px solid #ffd43b;
+/* Main severe / warning red-orange gradient */
+.graphic.severe .top-banner,
+.graphic.thunderstormWarning .top-banner,
+.graphic.weatherWarning .top-banner,
+.graphic.windWarning .top-banner,
+.graphic.hailWarning .top-banner {
+  background: linear-gradient(90deg, #7a0000 0%, #b30000 50%, #ff6f14 100%);
+  color: #ffffff;
+}
+
+/* Flood blue-cyan gradient */
+.graphic.flood .top-banner {
+  background: linear-gradient(90deg, #062e66 0%, #0b4ea2 55%, #64d2ff 100%);
+  color: #ffffff;
+}
+
+/* Heat orange-yellow gradient */
+.graphic.heat .top-banner {
+  background: linear-gradient(90deg, #8f2600 0%, #c74600 55%, #ffe066 100%);
+  color: #ffffff;
+}
+
+/* Radar purple-pink gradient */
+.graphic.radar .top-banner {
+  background: linear-gradient(90deg, #220047 0%, #3c096c 52%, #f72585 100%);
+  color: #ffffff;
+}
+
+/* Advisory amber gradient */
+.graphic.windAdvisory .top-banner,
+.graphic.thunderstormAdvisory .top-banner,
+.graphic.weatherAdvisory .top-banner {
+  background: linear-gradient(90deg, #4f2f00 0%, #7a4b00 55%, #ffcc33 100%);
+  color: #ffffff;
+}
+
+/* Purple watch gradient */
+.graphic.windWatch .top-banner,
+.graphic.hailWatch .top-banner {
+  background: linear-gradient(90deg, #351062 0%, #5b21b6 55%, #a78bfa 100%);
+  color: #ffffff;
+}
+
+/* Orange/yellow watch gradient */
+.graphic.thunderstormWatch .top-banner,
+.graphic.weatherWatch .top-banner {
+  background: linear-gradient(90deg, #7c3c00 0%, #d97706 55%, #ffd43b 100%);
+  color: #ffffff;
+}
+
+/* Hail advisory slate-mint gradient */
+.graphic.hailAdvisory .top-banner {
+  background: linear-gradient(90deg, #172033 0%, #334155 55%, #a7f3d0 100%);
+  color: #ffffff;
+}
+
+/* Custom neutral-yellow gradient */
+.graphic.custom .top-banner {
+  background: linear-gradient(90deg, #111827 0%, #1f2937 55%, #ffd43b 100%);
+  color: #ffffff;
 }
 
 .bottom-banner {
-  background: #ffd43b;
   color: #111111;
+}
+
+.graphic.radar .bottom-banner {
+  color: #ffffff;
 }
 
 .map-frame {
   background: #111722;
-  border-left: 4px solid #ffd43b;
-  border-right: 4px solid #ffd43b;
 }
 
 .info-panel {
-  background: #111111;
-  border-top: 8px solid #ffd43b;
+  background: var(--info-color);
 }
 
 .accent-strip {
-  background: var(--accent-strip-color, #b30000);
-}
-
-.map-placeholder {
-  color: #8992a3;
-  background:
-    linear-gradient(45deg, rgba(255,255,255,.04) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255,255,255,.04) 25%, transparent 25%),
-    #111722;
-  background-size: 60px 60px;
+  background: var(--accent-strip-color, var(--top-color));
 }
 
 .brand-badge {
