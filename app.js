@@ -34,7 +34,7 @@ const mapImage = document.getElementById('mapImage');
 const mapPlaceholder = document.getElementById('mapPlaceholder');
 
 const defaults = {
-  severe: { top: 'SEVERE WEATHER ALERT', headline: 'STRONG STORMS POSSIBLE TONIGHT', details: 'Large hail, damaging winds, and heavy rainfall may impact parts of the region.', bottom: 'STAY WEATHER AWARE', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#b30000'] },
+  severe: { top: 'SEVERE WEATHER ALERT', headline: 'STRONG STORMS POSSIBLE TONIGHT', details: 'Hail possible, damaging winds, and heavy rainfall may impact parts of the region.', bottom: 'STAY WEATHER AWARE', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#b30000'] },
   flood: { top: 'FLOODING RISK', headline: 'HEAVY RAINFALL POSSIBLE', details: 'Repeated rounds of rain may cause street flooding and poor drainage issues.', bottom: 'TURN AROUND, DON’T DROWN', colors: ['#0b4ea2', '#64d2ff', '#64d2ff', '#64d2ff', '#101820', '#050505', '#0b4ea2'] },
   heat: { top: 'HEAT ALERT', headline: 'DANGEROUS HEAT EXPECTED', details: 'Limit outdoor activity, hydrate often, and check on pets and elderly neighbors.', bottom: 'HEAT SAFETY MATTERS', colors: ['#c74600', '#ffe066', '#ffe066', '#ffe066', '#17110a', '#050505', '#c74600'] },
   radar: { top: 'RADAR UPDATE', headline: 'STORMS MOVING THROUGH THE AREA', details: 'Heavy rain and gusty winds are possible as this activity moves across the region.', bottom: 'CHECK RADAR BEFORE TRAVEL', colors: ['#3c096c', '#f72585', '#f72585', '#f72585', '#100818', '#050505', '#3c096c'] },
@@ -50,7 +50,7 @@ const defaults = {
   weatherAdvisory: { top: 'WEATHER ADVISORY', headline: 'WEATHER MAY IMPACT TRAVEL', details: 'Use caution and stay updated as conditions may change across the area.', bottom: 'CHECK CONDITIONS BEFORE TRAVEL', colors: ['#7a4b00', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#7a4b00'] },
   weatherWarning: { top: 'WEATHER WARNING', headline: 'HAZARDOUS WEATHER EXPECTED', details: 'Hazardous weather may impact the area. Take action if warnings are issued.', bottom: 'STAY ALERT AND TAKE ACTION', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#b30000'] },
   weatherWatch: { top: 'WEATHER WATCH', headline: 'WEATHER THREAT BEING MONITORED', details: 'Conditions may become hazardous. Monitor updates and be ready to act.', bottom: 'STAY WEATHER AWARE', colors: ['#d97706', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#d97706'] },
-  currentConditions: { top: 'CURRENT CONDITIONS', headline: 'RBRTW AREA SNAPSHOT', details: 'Live NWS data for 78253 will be placed inside the map frame.', bottom: 'UPDATED FROM WEATHER.GOV', colors: ['#062e66', '#64d2ff', '#64d2ff', '#64d2ff', '#101820', '#050505', '#0b4ea2'] },
+  currentConditions: { top: 'CURRENT CONDITIONS', headline: 'RBRTW AREA LIVE WEATHER SNAPSHOT', details: 'Live NWS data for RBRTW AREA.', bottom: 'UPDATED FROM WEATHER.GOV', colors: ['#062e66', '#64d2ff', '#64d2ff', '#64d2ff', '#101820', '#050505', '#0b4ea2'] },
   custom: { top: 'WEATHER UPDATE', headline: 'CUSTOM WEATHER GRAPHIC', details: 'Enter your own text and choose a map or screenshot.', bottom: 'RBRTW WEATHER', colors: ['#1f2937', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#1f2937'] }
 };
 
@@ -157,6 +157,40 @@ function setCurrentConditionsLoadingBox(message = 'Loading live NWS data for 782
   placeCurrentConditionsBox(lastCurrentConditionsText);
 }
 
+function fitTextBoxToContent(box, options = {}) {
+  if (!box) return;
+
+  const maxFont = options.maxFont || 24;
+  const minFont = options.minFont || 15;
+  const lineHeight = options.lineHeight || 1.04;
+
+  window.requestAnimationFrame(() => {
+    if (!box || !box.isConnected) return;
+
+    box.style.overflow = 'hidden';
+    box.style.lineHeight = String(lineHeight);
+
+    let fontSize = maxFont;
+    box.style.fontSize = `${fontSize}px`;
+
+    while (
+      fontSize > minFont &&
+      (box.scrollHeight > box.clientHeight || box.scrollWidth > box.clientWidth)
+    ) {
+      fontSize -= 1;
+      box.style.fontSize = `${fontSize}px`;
+    }
+  });
+}
+
+function fitCurrentConditionsBox() {
+  fitTextBoxToContent(currentConditionsBox, {
+    maxFont: 24,
+    minFont: 15,
+    lineHeight: 1.04
+  });
+}
+
 function placeCurrentConditionsBox(text) {
   if (!objectLayer) return;
 
@@ -173,14 +207,14 @@ function placeCurrentConditionsBox(text) {
     currentConditionsBox.contentEditable = 'true';
     currentConditionsBox.spellcheck = false;
     currentConditionsBox.style.left = '70px';
-    currentConditionsBox.style.top = '48px';
+    currentConditionsBox.style.top = '34px';
     currentConditionsBox.style.width = '900px';
-    currentConditionsBox.style.height = '500px';
+    currentConditionsBox.style.height = '520px';
     currentConditionsBox.style.color = '#ffffff';
     currentConditionsBox.style.backgroundColor = '#07182f';
     currentConditionsBox.style.borderColor = '#64d2ff';
     currentConditionsBox.style.borderWidth = '6px';
-    currentConditionsBox.style.fontSize = '20px';
+    currentConditionsBox.style.fontSize = '24px';
     currentConditionsBox.style.textAlign = 'left';
     currentConditionsBox.style.fontWeight = '900';
     currentConditionsBox.style.fontStyle = 'normal';
@@ -192,11 +226,13 @@ function placeCurrentConditionsBox(text) {
     currentConditionsBox.addEventListener('input', () => {
       lastCurrentConditionsText = currentConditionsBox.innerText;
       if (selectedTextBox === currentConditionsBox && textBoxText) textBoxText.value = currentConditionsBox.innerText;
+      fitCurrentConditionsBox();
     });
   }
 
   currentConditionsBox.innerText = text;
   selectTextBox(currentConditionsBox);
+  fitCurrentConditionsBox();
 }
 
 async function loadCurrentConditions78253() {
@@ -1043,6 +1079,7 @@ function objectPointerMove(event) {
     } else if (startBox.width > 0 && startBox.height > 0) {
       dragTarget.style.height = `${Math.max(28, startBox.height * (newWidth / startBox.width))}px`;
     }
+    if (dragTarget.classList.contains('current-conditions-box')) fitTextBoxToContent(dragTarget, { maxFont: 24, minFont: 15, lineHeight: 1.04 });
   }
 }
 
@@ -1264,6 +1301,7 @@ function updateSelectedTextBox() {
   box.style.borderColor = textBoxBorderColor.value;
   box.style.borderWidth = `${textBoxBorderThickness.value}px`;
   box.style.fontSize = `${textBoxFontSize.value}px`;
+  if (box.classList.contains('current-conditions-box')) fitTextBoxToContent(box, { maxFont: Number(textBoxFontSize.value || 24), minFont: 15, lineHeight: 1.04 });
 }
 
 function setTextAlign(value) {
@@ -1415,6 +1453,9 @@ function drawCanvasTextBox(ctx, el, x, y, w, h) {
     ctx.lineWidth = border;
     ctx.strokeRect(x + border / 2, y + border / 2, w - border, h - border);
   }
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
   const fontSize = parseFloat(styles.fontSize || '28') || 28;
   const weight = styles.fontWeight || '700';
   const italic = styles.fontStyle === 'italic' ? 'italic ' : '';
@@ -1424,12 +1465,14 @@ function drawCanvasTextBox(ctx, el, x, y, w, h) {
   ctx.textAlign = styles.textAlign || 'center';
   const pad = Math.max(10, border + 8);
   const lines = el.innerText.split('\n');
-  const lineHeight = fontSize * 1.15;
+  const computedLineHeight = parseFloat(styles.lineHeight || '');
+  const lineHeight = Number.isFinite(computedLineHeight) ? computedLineHeight : fontSize * 1.15;
   let yy = y + pad;
   const maxWidth = w - pad * 2;
   lines.forEach(rawLine => {
     const wrapped = wrapTextToLines(ctx, rawLine, maxWidth);
     wrapped.forEach(line => {
+      if (yy + lineHeight > y + h - pad) return;
       let tx = x + w / 2;
       if (ctx.textAlign === 'left') tx = x + pad;
       if (ctx.textAlign === 'right') tx = x + w - pad;
