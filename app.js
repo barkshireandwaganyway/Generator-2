@@ -399,7 +399,7 @@ function applyPreview() {
   graphic.className = `graphic ${type}`;
   previewTop.textContent = topText.value || 'WEATHER ALERT';
   previewHeadline.textContent = headline.value || 'WEATHER UPDATE';
-  previewDetails.textContent = details.value || 'Details will appear here.';
+  previewDetails.textContent = details.value;
   previewBottom.textContent = bottomText.value || 'STAY WEATHER AWARE';
   applyColors();
   applyMapFit();
@@ -810,7 +810,7 @@ async function exportGraphicWithCanvas() {
 
   ctx.fillStyle = '#ffffff';
   ctx.font = '850 29px Arial';
-  wrapCanvasText(ctx, details.value || 'Details will appear here.', 94, 913, 880, 34, 3);
+  wrapCanvasText(ctx, details.value, 94, 913, 880, 34, 3);
 
   // Bottom banner.
   ctx.fillStyle = bottom;
