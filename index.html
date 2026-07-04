@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBRTW Weather Graphic Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="control-panel">
+      <div class="panel-header">
+        <p class="eyebrow">RBRTW</p>
+        <h1>Weather Graphic Generator</h1>
+        <p class="small">Currently in Beta</p>
+      </div>
+
+      <label>Template Type</label>
+      <select id="templateType">
+        <option value="severe">Severe Weather</option>
+        <option value="flood">Flooding / Heavy Rain</option>
+        <option value="heat">Heat Alert</option>
+        <option value="radar">Radar Update</option>
+        <option value="windAdvisory">Strong Wind Advisory</option>
+        <option value="windWarning">Strong Wind Warning</option>
+        <option value="windWatch">Strong Wind Watch</option>
+        <option value="thunderstormAdvisory">Thunderstorm Advisory</option>
+        <option value="thunderstormWarning">Thunderstorm Warning</option>
+        <option value="thunderstormWatch">Thunderstorm Watch</option>
+        <option value="hailAdvisory">Hail Advisory</option>
+        <option value="hailWarning">Hail Warning</option>
+        <option value="hailWatch">Hail Watch</option>
+        <option value="weatherAdvisory">Weather Advisory</option>
+        <option value="weatherWarning">Weather Warning</option>
+        <option value="weatherWatch">Weather Watch</option>
+        <option value="currentConditions">Current Conditions - 78253</option>
+        <option value="custom">Manual Custom</option>
+      </select>
+
+      <label>Top Banner</label>
+      <input id="topText" value="SEVERE WEATHER ALERT" />
+
+      <label>Main Headline</label>
+      <textarea id="headline" rows="2">STRONG STORMS POSSIBLE TONIGHT</textarea>
+
+      <label>Brief Details</label>
+      <textarea id="details" rows="3">Large hail, damaging winds, and heavy rainfall may impact parts of the region.</textarea>
+
+      <label>Bottom Banner</label>
+      <input id="bottomText" value="STAY WEATHER AWARE" />
+
+      <div class="color-grid">
+        <div><label>Top Bar Color</label><input id="topColor" type="color" value="#b30000" /></div>
+        <div><label>Accent Color</label><input id="accentColor" type="color" value="#ffd43b" /></div>
+        <div><label>Bottom Bar Color</label><input id="bottomColor" type="color" value="#ffd43b" /></div>
+        <div><label>Text Highlight Color</label><input id="highlightColor" type="color" value="#ffd43b" /></div>
+        <div><label>Info Box Color</label><input id="infoColor" type="color" value="#111111" /></div>
+        <div><label>Frame Color</label><input id="frameColor" type="color" value="#050505" /></div>
+        <div><label>Vertical Bar Color</label><input id="accentStripColor" type="color" value="#b30000" /></div>
+      </div>
+
+      <label>Map / Radar Image</label>
+      <input id="mapUpload" type="file" accept="image/*" />
+      <input id="mapUrl" placeholder="or paste image URL here" />
+
+      <details class="toolbox" open>
+        <summary>Current Conditions Template</summary>
+        <div class="tool-row">
+          <button id="loadCurrentConditionsBtn" type="button">Load 78253 Conditions</button>
+          <button id="clearCurrentConditionsBtn" type="button">Remove Conditions Box</button>
+        </div>
+        <p class="small">This uses live Weather.gov data.</p>
+      </details>
+
+      <label>Map Auto-Scale</label>
+      <select id="mapFit">
+        <option value="cover">Fill frame / crop edges</option>
+        <option value="contain" selected>Fit entire image inside frame / no crop</option>
+        <option value="fill">Stretch to frame</option>
+      </select>
+
+      <details class="toolbox" open>
+        <summary>Map Image Position</summary>
+        <label>Map Zoom</label>
+        <input id="mapZoom" type="range" min="100" max="300" value="100" />
+        <label>Move Left / Right</label>
+        <input id="mapPanX" type="range" min="-100" max="100" value="0" />
+        <label>Move Up / Down</label>
+        <input id="mapPanY" type="range" min="-100" max="100" value="0" />
+        <div class="tool-row">
+          <button id="resetMapPositionBtn" type="button">Reset Map Position</button>
+        </div>
+        <p class="small">These controls only move/zoom the uploaded map image. Text, lines, circles, keys, and overlays stay in place.</p>
+      </details>
+
+      <label>Preview Size</label>
+      <select id="previewScale">
+        <option value="0.30">Tiny Preview</option>
+        <option value="0.40">Small Preview</option>
+        <option value="0.50" selected>Medium Preview</option>
+        <option value="0.65">Large Preview</option>
+        <option value="0.80">Extra Large Preview</option>
+      </select>
+
+      <details class="toolbox" open>
+        <summary>Map Drawing Tools</summary>
+
+        <div class="tool-row">
+          <button id="addLineBtn" type="button">Add Draggable Line</button>
+          <button id="clearLineBtn" type="button">Remove Line</button>
+        </div>
+        <div class="color-grid compact">
+          <div><label>Line Color</label><input id="lineColor" type="color" value="#ffea00" /></div>
+          <div><label>Line Thickness</label><input id="lineThickness" type="number" min="1" max="40" value="8" /></div>
+          <div><label>Start Arrow</label><select id="lineStartArrow"><option value="none">None</option><option value="closed">Closed</option><option value="open">Open</option></select></div>
+          <div><label>End Arrow</label><select id="lineEndArrow"><option value="closed">Closed</option><option value="open">Open</option><option value="none">None</option></select></div>
+        </div>
+
+        <div class="tool-row">
+          <button id="addCircleBtn" type="button">Add Draggable Circle</button>
+          <button id="clearCircleBtn" type="button">Remove Circle</button>
+        </div>
+        <div class="color-grid compact">
+          <div><label>Circle Outline</label><input id="circleColor" type="color" value="#ffea00" /></div>
+          <div><label>Circle Thickness</label><input id="circleThickness" type="number" min="1" max="40" value="8" /></div>
+        </div>
+      </details>
+
+
+      <details class="toolbox" open>
+        <summary>Text Boxes</summary>
+        <div class="tool-row">
+          <button id="addTextBoxBtn" type="button">Add Text Box</button>
+          <button id="clearTextBoxesBtn" type="button">Clear Text Boxes</button>
+        </div>
+        <label>Selected Text Box Text</label>
+        <textarea id="textBoxText" rows="4">NOAA HRRR V4
+PRECIPITATION AMOUNT IN INCHES
+BETWEEN NOW AND WEDNESDAY
+THIS IS 1 MODEL OF MANY.</textarea>
+        <div class="tool-row text-format-row">
+          <button id="textAlignLeftBtn" type="button">Left</button>
+          <button id="textAlignCenterBtn" type="button">Center</button>
+          <button id="textAlignRightBtn" type="button">Right</button>
+          <button id="textBoldBtn" type="button">Bold</button>
+          <button id="textItalicBtn" type="button">Italic</button>
+          <button id="textUnderlineBtn" type="button">Underline</button>
+          <button id="textBulletsBtn" type="button">Bullets</button>
+        </div>
+        <div class="color-grid compact">
+          <div><label>Text Color</label><input id="textBoxTextColor" type="color" value="#ffffff" /></div>
+          <div><label>Box Color</label><input id="textBoxFillColor" type="color" value="#003cff" /></div>
+          <div><label>Border Color</label><input id="textBoxBorderColor" type="color" value="#ff0000" /></div>
+          <div><label>Border Thickness</label><input id="textBoxBorderThickness" type="number" min="0" max="30" value="6" /></div>
+          <div><label>Font Size</label><input id="textBoxFontSize" type="number" min="12" max="80" value="28" /></div>
+          <div><label>Box X Position</label><input id="textBoxPosX" type="number" min="-500" max="1500" value="36" /></div>
+          <div><label>Box Y Position</label><input id="textBoxPosY" type="number" min="-500" max="1000" value="72" /></div>
+        </div>
+        <p class="small">Default is the HRRR-style blue box, red outline, white text. Click a text box to edit/format it. Use X/Y to place it exactly inside the map frame.</p>
+      </details>
+
+      <details class="toolbox" open>
+        <summary>RBRTW Map Badge</summary>
+        <label class="checkbox-label"><input id="brandBadgeToggle" type="checkbox" checked /> Show RBRTW box</label>
+        <div class="color-grid compact">
+          <div><label>Badge X Position</label><input id="brandBadgeX" type="number" min="-500" max="1500" value="865" /></div>
+          <div><label>Badge Y Position</label><input id="brandBadgeY" type="number" min="-500" max="1000" value="18" /></div>
+        </div>
+        <p class="small">Moves the small RBRTW box inside the map frame. X/Y are measured from the top-left corner of the map frame.</p>
+      </details>
+
+      <details class="toolbox" open>
+        <summary>Color Key / Legend</summary>
+        <label>Key Type</label>
+        <select id="colorKeyType">
+          <option value="none">No Key</option>
+          <option value="radar">Radar Reflectivity (dBZ)</option>
+          <option value="qpf">QPF / Rainfall (inches)</option>
+          <option value="rainTotals">Rain Totals (inches)</option>
+          <option value="velocity">Radar Velocity (mph)</option>
+          <option value="vil">Vertically Integrated Liquid / VIL</option>
+          <option value="heatIndex">Heat Index (°F)</option>
+          <option value="wind">Wind Speed (mph)</option>
+          <option value="spc">SPC Severe Risk</option>
+          <option value="spcSeverity">SPC Severity Index</option>
+          <option value="winter">Winter Weather</option>
+          <option value="fire">Fire Weather</option>
+        </select>
+        <label>Key Placement</label>
+        <select id="colorKeyPlacement">
+          <option value="right">Right Side</option>
+          <option value="left">Left Side</option>
+          <option value="bottom">Bottom Center</option>
+          <option value="topRight">Top Right</option>
+          <option value="topLeft">Top Left</option>
+        </select>
+        <div class="color-grid compact">
+          <div><label>Key Move Left / Right</label><input id="keyMoveX" type="range" min="0" max="1040" value="920" /></div>
+          <div><label>Key Move Up / Down</label><input id="keyMoveY" type="range" min="0" max="590" value="70" /></div>
+          <div><label>Key Scale</label><input id="keyScale" type="range" min="50" max="220" value="100" /></div>
+        </div>
+        <div class="tool-row">
+          <button id="addColorKeyBtn" type="button">Add / Update Key</button>
+          <button id="clearColorKeyBtn" type="button">Remove Key</button>
+        </div>
+        <p class="small">Use the sliders to move and scale the key. You can still drag/rescale it by hand in the preview.</p>
+      </details>
+
+      <details class="toolbox" open>
+        <summary>PNG Weather Overlays</summary>
+        <label>Upload PNG Overlay</label>
+        <input id="overlayUpload" type="file" accept="image/png,image/*" multiple />
+
+        <label>Choose Saved Overlay</label>
+        <select id="overlayLibrary">
+          <option value="">Choose from /assets/overlays...</option>
+        </select>
+
+        <div class="tool-row">
+          <button id="addSavedOverlayBtn" type="button">Add Saved Overlay</button>
+          <button id="clearOverlaysBtn" type="button">Clear Overlays</button>
+        </div>
+        <p class="small">To use saved icons, put PNGs in <b>assets/overlays</b> and add their file names to <b>overlayLibrary</b> in app.js.</p>
+      </details>
+
+      <div class="button-row">
+        <button id="applyBtn">Preview Graphic</button>
+        <button id="downloadBtn">Download PNG</button>
+      </div>
+    </section>
+
+    <section class="preview-area">
+      <div id="previewShell" class="preview-shell">
+        <div id="previewScaler" class="preview-scaler">
+      <div id="graphic" class="graphic severe">
+        <div class="top-banner" id="previewTop">SEVERE WEATHER ALERT</div>
+
+        <div class="map-frame" id="mapFrame">
+          <img id="mapImage" class="map-image" src="" alt="Weather map background" />
+          <div class="map-placeholder" id="mapPlaceholder">UPLOAD OR PASTE A WEATHER MAP / RADAR IMAGE</div>
+          <svg id="lineLayer" class="line-layer" viewBox="0 0 1040 590" preserveAspectRatio="none"></svg>
+          <div id="objectLayer" class="object-layer"></div>
+          <div id="brandBadge" class="brand-badge">RBRTW</div>
+        </div>
+
+        <div class="info-panel">
+          <div class="accent-strip"></div>
+          <div class="info-copy">
+            <h2 id="previewHeadline">STRONG STORMS POSSIBLE TONIGHT</h2>
+            <p id="previewDetails">Large hail, damaging winds, and heavy rainfall may impact parts of the region.</p>
+          </div>
+        </div>
+
+        <div class="bottom-banner" id="previewBottom">STAY WEATHER AWARE</div>
+      </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
