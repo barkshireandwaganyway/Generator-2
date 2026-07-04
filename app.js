@@ -54,7 +54,7 @@ const defaults = {
   weatherAdvisory: { top: 'WEATHER ADVISORY', headline: 'WEATHER MAY IMPACT TRAVEL', details: 'Use caution and stay updated as conditions may change across the area.', bottom: 'CHECK CONDITIONS BEFORE TRAVEL', colors: ['#7a4b00', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#7a4b00'] },
   weatherWarning: { top: 'WEATHER WARNING', headline: 'HAZARDOUS WEATHER EXPECTED', details: 'Hazardous weather may impact the area. Take action if warnings are issued.', bottom: 'STAY ALERT AND TAKE ACTION', colors: ['#b30000', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#b30000'] },
   weatherWatch: { top: 'WEATHER WATCH', headline: 'WEATHER THREAT BEING MONITORED', details: 'Conditions may become hazardous. Monitor updates and be ready to act.', bottom: 'STAY WEATHER AWARE', colors: ['#d97706', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#d97706'] },
-  currentConditions: { top: 'CURRENT CONDITIONS', headline: '78253 LIVE WEATHER SNAPSHOT', details: 'Live NWS data for 78253 will be placed inside the map frame.', bottom: 'UPDATED FROM WEATHER.GOV', colors: ['#062e66', '#64d2ff', '#64d2ff', '#64d2ff', '#101820', '#050505', '#0b4ea2'] },
+  currentConditions: { top: 'CURRENT CONDITIONS', headline: 'RBRTW AREA LIVE WEATHER SNAPSHOT', details: 'Live NWS data for RBRTW AREA will be placed inside the map frame.', bottom: 'UPDATED FROM WEATHER.GOV', colors: ['#062e66', '#64d2ff', '#64d2ff', '#64d2ff', '#101820', '#050505', '#0b4ea2'] },
   custom: { top: 'WEATHER UPDATE', headline: 'CUSTOM WEATHER GRAPHIC', details: 'Enter your own text and choose a map or screenshot.', bottom: 'RBRTW WEATHER', colors: ['#1f2937', '#ffd43b', '#ffd43b', '#ffd43b', '#111111', '#050505', '#1f2937'] }
 };
 
